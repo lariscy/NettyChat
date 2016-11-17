@@ -3,6 +3,7 @@ package com.githup.lariscy.nettychat.client.net;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -22,7 +23,7 @@ public class NettyClient {
     private static final int PORT = 8383;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     private Bootstrap b;
-    private Channel channel;
+    private ChannelHandlerContext ctx;
     private boolean isConnected;
     private NettyClient instance;
     
@@ -52,30 +53,43 @@ public class NettyClient {
         ChannelFuture connectFuture = b.connect(HOST, PORT);
         connectFuture.awaitUninterruptibly();
         if (connectFuture.isSuccess()){
-           isConnected = true; 
+            isConnected = true;
+           return true; 
         } else {
             connectFuture.cause().printStackTrace();
         }
-        return isConnected;
+        return false;
     }
     
     public boolean disconnect(){
-        Future disconnectFuture = workerGroup.shutdownGracefully();
-        disconnectFuture.addListener((Future f) -> {
-            if (f.isSuccess()){
-                isConnected = false;
-            } else {
-                f.cause().printStackTrace();
-            }
-        });
-        return isConnected;
+        ChannelFuture disConnectFuture = ctx.channel().disconnect();
+        disConnectFuture.awaitUninterruptibly();
+        if (disConnectFuture.isSuccess()){
+            isConnected = false;
+            return true;
+        } else {
+            disConnectFuture.cause().printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean closeThreads(){
+        Future closeThreadsFuture = workerGroup.shutdownGracefully();
+        closeThreadsFuture.awaitUninterruptibly();
+        if (closeThreadsFuture.isSuccess()){
+            return true;
+        } else {
+            closeThreadsFuture.cause().printStackTrace();
+        }
+        return false;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public ChannelHandlerContext getChannelHandlerContext() {
+        return ctx;
     }
-    public void setChannel(Channel channel){
-        this.channel = channel;
+    
+    public void setChannelHandlerContext(ChannelHandlerContext ctx){
+        this.ctx = ctx;
     }
     
     public boolean isConnected(){

@@ -19,12 +19,15 @@ public class NetworkService {
         return nettyClient.disconnect();
     }
     
+    public boolean closeThreads(){
+        return nettyClient.closeThreads();
+    }
+    
     public void sendMessage(String message){
-        ChannelFuture sendFuture = nettyClient.getChannel().writeAndFlush(new ChatMessage(message));
+        ChannelFuture sendFuture = nettyClient.getChannelHandlerContext().writeAndFlush(new ChatMessage(message));
         sendFuture.awaitUninterruptibly();
-        if (!sendFuture.isSuccess()){
+        if (!sendFuture.isSuccess())
             sendFuture.cause().printStackTrace();
-        }
     }
     
     public boolean isClientConnected(){

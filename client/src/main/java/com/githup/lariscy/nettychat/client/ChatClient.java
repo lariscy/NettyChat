@@ -43,6 +43,7 @@ public class ChatClient extends Application {
     public void stop() throws Exception {
         super.stop();
         networkService.disconnect();
+        networkService.closeThreads();
     }
     
     public static Injector getInjector(){

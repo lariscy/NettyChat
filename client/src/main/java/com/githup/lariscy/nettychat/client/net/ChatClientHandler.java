@@ -30,7 +30,7 @@ public class ChatClientHandler extends SimpleChannelInboundHandler<ChatMessage> 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        nettyClient.setChannel(ctx.channel());
+        nettyClient.setChannelHandlerContext(ctx);
     }
 
 }
