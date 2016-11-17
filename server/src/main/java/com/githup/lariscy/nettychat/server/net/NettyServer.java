@@ -1,8 +1,8 @@
 package com.githup.lariscy.nettychat.server.net;
 
+import com.githup.lariscy.nettychat.shared.ChatMessage;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
@@ -42,7 +42,7 @@ public class NettyServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                    new ObjectDecoder(ClassResolvers.cacheDisabled(getClass().getClassLoader())),
                     new ObjectEncoder(),
                     new ChatServerHandler(instance)
                 );
@@ -76,7 +76,7 @@ public class NettyServer {
         System.out.println("channel ["+channel.remoteAddress()+"] removed - current size: "+channelGroup.size());
     }
     
-    public void sendMessage(Object message){
+    public void sendMessage(ChatMessage message){
         channelGroup.forEach((ch) -> 
             ch.writeAndFlush(message));
     }

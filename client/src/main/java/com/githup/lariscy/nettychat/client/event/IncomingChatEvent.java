@@ -1,6 +1,6 @@
 package com.githup.lariscy.nettychat.client.event;
 
-import com.githup.lariscy.nettychat.client.net.ChatMessage;
+import com.githup.lariscy.nettychat.shared.ChatMessage;
 
 /**
  * @author Steven

@@ -1,6 +1,7 @@
 package com.githup.lariscy.nettychat.client.net;
 
 import com.githup.lariscy.nettychat.client.ChatClient;
+import com.githup.lariscy.nettychat.shared.ChatMessage;
 import com.githup.lariscy.nettychat.client.event.IncomingChatEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,7 +11,7 @@ import net.engio.mbassy.bus.MBassador;
 /**
  * @author Steven
  */
-public class ChatClientHandler extends SimpleChannelInboundHandler<Object> {
+public class ChatClientHandler extends SimpleChannelInboundHandler<ChatMessage> {
     
     @Inject
     private MBassador eventBus;
@@ -22,9 +23,8 @@ public class ChatClientHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object message) throws Exception {
-        super.channelRead(ctx, message);
-        eventBus.publishAsync(new IncomingChatEvent(new ChatMessage((String) message)));
+    protected void channelRead0(ChannelHandlerContext ctx, ChatMessage message) throws Exception {
+        eventBus.publishAsync(new IncomingChatEvent(message));
     }
 
     @Override

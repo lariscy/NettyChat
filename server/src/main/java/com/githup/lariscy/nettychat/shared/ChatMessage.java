@@ -1,9 +1,13 @@
-package com.githup.lariscy.nettychat.server.net;
+package com.githup.lariscy.nettychat.shared;
+
+import java.io.Serializable;
 
 /**
- * @author Steven
+ * @author Steven Lariscy
  */
-public class ChatMessage {
+public class ChatMessage implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     
     private String message;
 
@@ -21,5 +25,5 @@ public class ChatMessage {
     public void setMessage(String message) {
         this.message = message;
     }
-
+    
 }

@@ -1,12 +1,13 @@
 package com.githup.lariscy.nettychat.server.net;
 
+import com.githup.lariscy.nettychat.shared.ChatMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author Steven Lariscy
  */
-public class ChatServerHandler extends SimpleChannelInboundHandler<Object> {
+public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> {
     
     private NettyServer nettyServer;
     
@@ -15,8 +16,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object message) throws Exception {
-        System.out.println("recevied a message");
+    protected void channelRead0(ChannelHandlerContext ctx, ChatMessage message) throws Exception {
         nettyServer.sendMessage(message);
     }
 

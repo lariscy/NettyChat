@@ -41,7 +41,7 @@ public class NettyClient {
             protected void initChannel(Channel ch) throws Exception {
                 ch.pipeline().addLast(
                     new ObjectEncoder(),
-                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                    new ObjectDecoder(ClassResolvers.cacheDisabled(getClass().getClassLoader())),
                     new ChatClientHandler(instance)
                 );
             }
