@@ -1,7 +1,7 @@
 package com.githup.lariscy.nettychat.client;
 
 import com.githup.lariscy.nettychat.client.controller.ChatClientController;
-import com.githup.lariscy.nettychat.client.net.NetworkService;
+import com.githup.lariscy.nettychat.client.service.NetworkService;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import javafx.application.Application;
@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 public class ChatClient extends Application {
     
     private Stage primaryStage;
-    private Injector injector = Guice.createInjector(new ChatClientGuiceModule());
+    private static Injector injector = Guice.createInjector(new ChatClientGuiceModule());
     private NetworkService networkService = new NetworkService();
     
     public static void main(String[] args) {
@@ -29,6 +29,7 @@ public class ChatClient extends Application {
         
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/com/githup/lariscy/nettychat/client/fxml/ChatClient.fxml"));
+        loader.setControllerFactory(injector::getInstance);
         Parent parent = loader.load();
         ChatClientController controller = loader.getController();
         controller.setNetworkService(networkService);
@@ -42,6 +43,10 @@ public class ChatClient extends Application {
     public void stop() throws Exception {
         super.stop();
         networkService.disconnect();
+    }
+    
+    public static Injector getInjector(){
+        return injector;
     }
 
 }

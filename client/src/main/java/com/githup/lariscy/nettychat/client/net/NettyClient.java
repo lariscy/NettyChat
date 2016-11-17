@@ -2,6 +2,7 @@ package com.githup.lariscy.nettychat.client.net;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -23,8 +24,10 @@ public class NettyClient {
     private Bootstrap b;
     private Channel channel;
     private boolean isConnected;
+    private NettyClient instance;
     
     public NettyClient(){
+        instance = this;
         this.setup();
     }
     
@@ -36,22 +39,23 @@ public class NettyClient {
         b.handler(new ChannelInitializer() {
             @Override
             protected void initChannel(Channel ch) throws Exception {
-                ch.pipeline().addLast(new ObjectEncoder());
-                ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
-                ch.pipeline().addLast(new ChatClientHandler());
+                ch.pipeline().addLast(
+                    new ObjectEncoder(),
+                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                    new ChatClientHandler(instance)
+                );
             }
         });
     }
     
     public boolean connect(){
-        Future connectFuture = b.connect(HOST, PORT);
-        connectFuture.addListener((Future f) -> {
-            if (f.isSuccess()){
-                isConnected = true;
-            } else {
-                f.cause().printStackTrace();
-            }
-        });
+        ChannelFuture connectFuture = b.connect(HOST, PORT);
+        connectFuture.awaitUninterruptibly();
+        if (connectFuture.isSuccess()){
+           isConnected = true; 
+        } else {
+            connectFuture.cause().printStackTrace();
+        }
         return isConnected;
     }
     
@@ -69,6 +73,9 @@ public class NettyClient {
 
     public Channel getChannel() {
         return channel;
+    }
+    public void setChannel(Channel channel){
+        this.channel = channel;
     }
     
     public boolean isConnected(){

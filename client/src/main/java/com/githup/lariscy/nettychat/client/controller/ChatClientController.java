@@ -2,11 +2,9 @@ package com.githup.lariscy.nettychat.client.controller;
 
 import com.githup.lariscy.nettychat.client.ClientStatus;
 import com.githup.lariscy.nettychat.client.event.IncomingChatEvent;
-import com.githup.lariscy.nettychat.client.net.NetworkService;
+import com.githup.lariscy.nettychat.client.service.NetworkService;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javax.inject.Inject;
+import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.listener.Handler;
 
 /**
@@ -35,9 +35,14 @@ public class ChatClientController implements Initializable {
     private NetworkService networkService;
     private static final int NUM_CONNECT_RETRIES = 3;
     
+    @Inject
+    private MBassador eventBus;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.setupBindings();
+        
+        eventBus.subscribe(this);
     }
     
     private void setupBindings(){
@@ -84,7 +89,8 @@ public class ChatClientController implements Initializable {
     private void sendMessage(){
         if (txtMessage.getText().trim().equals(""))
             return;
-        this.addMessageToHistory(txtMessage.getText());
+        networkService.sendMessage(txtMessage.getText());
+        //this.addMessageToHistory(txtMessage.getText());
         
         txtMessage.setText("");
     }
@@ -95,8 +101,8 @@ public class ChatClientController implements Initializable {
         new Thread(() -> {
             System.out.println("attempting to connect");
             connectAttempts = 1;
-            while (!networkService.connect() && (connectAttempts <= 3)){
-                if (networkService.isClientConnected()){
+            for (connectAttempts = 1; connectAttempts<=3; connectAttempts++){
+                if (networkService.connect() && networkService.isClientConnected()){
                     Platform.runLater(() -> {
                         addMessageToHistory("client connected succcessfully");
                         clientStatus.setConnected(true);
@@ -108,7 +114,6 @@ public class ChatClientController implements Initializable {
                                     "["+connectAttempts+" of "+NUM_CONNECT_RETRIES+"], retrying in 3 seconds"));
                     try { Thread.sleep(3000);  } catch (InterruptedException ex) { }
                 }
-                connectAttempts++;
             }
         }).start();
     }
