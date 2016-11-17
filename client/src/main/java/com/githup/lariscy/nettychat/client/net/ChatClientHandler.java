@@ -23,8 +23,7 @@ public class ChatClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object message) throws Exception {
-        //super.channelRead(ctx, message);
-        System.out.println("eventBus: "+eventBus);
+        super.channelRead(ctx, message);
         eventBus.publishAsync(new IncomingChatEvent(new ChatMessage((String) message)));
     }
 

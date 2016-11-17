@@ -1,6 +1,5 @@
 package com.githup.lariscy.nettychat.client.service;
 
-import com.githup.lariscy.nettychat.client.net.ChatMessage;
 import com.githup.lariscy.nettychat.client.net.NettyClient;
 import io.netty.channel.ChannelFuture;
 

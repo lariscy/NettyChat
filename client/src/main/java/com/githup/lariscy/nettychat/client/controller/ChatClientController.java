@@ -132,7 +132,8 @@ public class ChatClientController implements Initializable {
     
     @Handler
     private void messageReceived(IncomingChatEvent event){
-        this.addMessageToHistory(event.getChatMessage().getMessage());
+        Platform.runLater(() ->
+                this.addMessageToHistory(event.getChatMessage().getMessage()));
     }
     
 }
