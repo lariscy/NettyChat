@@ -42,7 +42,7 @@ public class NettyServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                    new ObjectDecoder(ClassResolvers.cacheDisabled(getClass().getClassLoader())),
+                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                     new ObjectEncoder(),
                     new ChatServerHandler(instance)
                 );
@@ -76,7 +76,7 @@ public class NettyServer {
         System.out.println("channel ["+channel.remoteAddress()+"] removed - current size: "+channelGroup.size());
     }
     
-    public void sendMessage(ChatMessage message){
+    public void broadcastMessage(ChatMessage message){
         channelGroup.forEach((ch) -> 
             ch.writeAndFlush(message));
     }

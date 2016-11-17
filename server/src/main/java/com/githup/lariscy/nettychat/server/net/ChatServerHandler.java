@@ -17,7 +17,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMessage> 
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ChatMessage message) throws Exception {
-        nettyServer.sendMessage(message);
+        nettyServer.broadcastMessage(message);
     }
 
     @Override
