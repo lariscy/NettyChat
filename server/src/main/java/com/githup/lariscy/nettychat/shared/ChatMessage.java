@@ -9,6 +9,7 @@ public class ChatMessage implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
+    private String userId;
     private String message;
 
     public ChatMessage() {
@@ -16,6 +17,19 @@ public class ChatMessage implements Serializable {
 
     public ChatMessage(String message) {
         this.message = message;
+    }
+    
+    public ChatMessage(String userId, String message) {
+        this.userId = userId;
+        this.message = message;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getMessage() {

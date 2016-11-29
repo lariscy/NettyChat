@@ -24,7 +24,8 @@ public class NetworkService {
     }
     
     public void sendMessage(String message){
-        ChannelFuture sendFuture = nettyClient.getChannelHandlerContext().writeAndFlush(new ChatMessage(message));
+        ChannelFuture sendFuture = nettyClient.getChannelHandlerContext()
+                .writeAndFlush(new ChatMessage(System.getProperty("user.name"), message));
         sendFuture.awaitUninterruptibly();
         if (!sendFuture.isSuccess())
             sendFuture.cause().printStackTrace();

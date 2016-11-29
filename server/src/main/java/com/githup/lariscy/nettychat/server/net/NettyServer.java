@@ -69,11 +69,13 @@ public class NettyServer {
     public void addChannel(Channel channel){
         channelGroup.add(channel);
         System.out.println("channel ["+channel.remoteAddress()+"] added - current size: "+channelGroup.size());
+        broadcastMessage(new ChatMessage(String.format("user [%s] has connected", channel.remoteAddress())));
     }
     
     public void removeChannel(Channel channel){
         channelGroup.remove(channel);
         System.out.println("channel ["+channel.remoteAddress()+"] removed - current size: "+channelGroup.size());
+        broadcastMessage(new ChatMessage(String.format("user [%s] has disconnected", channel.remoteAddress())));
     }
     
     public void broadcastMessage(ChatMessage message){
